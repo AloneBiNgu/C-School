@@ -6,9 +6,9 @@ struct Points {
     int x, y;
 };
 int n;
-long double dt, chuvi;
+double dt, chuvi;
 
-long double Dis(Points a, Points b) {
+double Dis(Points a, Points b) {
     return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 }
 
@@ -43,7 +43,7 @@ vector<Points> convexHull(vector<Points> &points) {
     return hull;
 }
 
-void Calc(vector<Points> &args, long double &dt, long double &chuvi) {
+void Calc(vector<Points> &args, double &dt, double &chuvi) {
     vector<Points> hull = convexHull(args);
 
     chuvi = 0.0;
