@@ -3,10 +3,11 @@
 using namespace std;
 
 struct Points {
-    int x, y;
+    long double x, y;
 };
 
 int n;
+Points bill;
 
 bool ccw(Points A, Points B, Points C) {
     return 1LL * (B.x - A.x) * (C.y - A.y) - 1LL * (C.x - A.x) * (B.y - A.y) > 0;
@@ -39,30 +40,43 @@ vector<Points> convexHull(vector<Points> &points) {
     return hull;
 }
 
-long double Calc(vector<Points> &hull) {
-    long double dt = 0.0;
+long double Dis(Points &a, Points &b) {
+    return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
+}
+
+Points TrungDiem(Points &a, Points &b) {
+    Points m;
+    m.x = (a.x + b.x) / 2;
+    m.y = (a.y + b.y) / 2;
+    return m;
+}
+
+void Process(vector<Points> &hull) {
+    long double ans = INT_MAX;
+
     for (int i = 0; i < hull.size(); i++) {
-        dt += hull[i].x * hull[(i + 1) % n].y - hull[i].y * hull[(i + 1) % n].x;
+        int j = (i + 1) % hull.size();
+        auto M = TrungDiem(hull[i], hull[j]);
+        ans = min(ans, Dis(bill, M));
     }
-    return fabs(dt) / 2.0;
+    cout << fixed << setprecision(4) << ans << "\n";
 }
 
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    freopen("poly.inp", "r", stdin);
-    freopen("poly.out", "w", stdout);
+    freopen("bill.inp", "r", stdin);
+    freopen("bill.out", "w", stdout);
 
-    cin >> n;
+    cin >> n >> bill.x >> bill.y;
     vector<Points> args(n);
 
-    for (Points &a : args) {
-        cin >> a.x >> a.y;
+    for (int i = 0; i < n; i++) {
+        cin >> args[i].x >> args[i].y;
     }
 
     auto Hull = convexHull(args);
-    
-    cout << fixed << setprecision(1) << Calc(Hull) << "\n";
+    Process(Hull);
     return 0;
 }
