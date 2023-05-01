@@ -17,8 +17,8 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    freopen("tripoint.inp", "r", stdin);
-    freopen("tripoint.out", "w", stdout);
+    // freopen("tripoint.inp", "r", stdin);
+    // freopen("tripoint.out", "w", stdout);
 
     cin >> n;
     args.resize(n + 1);

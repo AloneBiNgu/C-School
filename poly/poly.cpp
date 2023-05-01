@@ -2,67 +2,55 @@
 
 using namespace std;
 
-struct Points {
+const int maxN = 1505;
+
+struct point {
     int x, y;
 };
 
 int n;
+vector<point> args(maxN);
 
-bool ccw(Points A, Points B, Points C) {
-    return 1LL * (B.x - A.x) * (C.y - A.y) - 1LL * (C.x - A.x) * (B.y - A.y) > 0;
+double area(point a, point b, point c) {
+    return fabs((a.x - c.x) * (b.y - c.y) - (b.x - c.x) * (a.y - c.y)) / 2.0;
 }
 
-vector<Points> convexHull(vector<Points> &points) {
-    sort(points.begin(), points.end(), [](Points a, Points b) {
-        if (a.x != b.x) return a.x < b.x;
-        return a.y < b.y;
-    });
 
-    vector<Points> hull;
-    hull.push_back(points[0]);
-    
-    for (int i = 1; i < points.size(); i++) {
-        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i])) {
-            hull.pop_back();
-        }
-        hull.push_back(points[i]);
-    }
-
-    for (int i = points.size() - 2; i >= 0; i--) {
-        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i])) {
-            hull.pop_back();
-        }
-        hull.push_back(points[i]);
-    }
-
-    if (hull.size() > 1) hull.pop_back();
-    return hull;
-}
-
-long double Calc(vector<Points> &hull) {
-    long double dt = 0.0;
-    for (int i = 0; i < hull.size(); i++) {
-        dt += hull[i].x * hull[(i + 1) % n].y - hull[i].y * hull[(i + 1) % n].x;
-    }
-    return fabs(dt) / 2.0;
-}
 
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    freopen("poly.inp", "r", stdin);
-    freopen("poly.out", "w", stdout);
+    // freopen("poly.inp", "r", stdin);
+    // freopen("poly.out", "w", stdout);
 
     cin >> n;
-    vector<Points> args(n);
 
-    for (Points &a : args) {
-        cin >> a.x >> a.y;
+    for (int i = 0; i < n; i++) {
+        cin >> args[i].x >> args[i].y;
     }
 
-    auto Hull = convexHull(args);
-    
-    cout << fixed << setprecision(1) << Calc(Hull) << "\n";
+    double max_area = 0;
+    // for (int i = 0; i <= n - 4; i++) {
+    //     for (int j = i + 1; j <= n - 3; j++) {
+    //         for (int k = j + 1; k <= n - 2; k++) {
+    //             for (int l = k + 1; l <= n - 1; l++) {
+    //                 double cur_area = area(args[i], args[j], args[k]) + area(args[i], args[k], args[l]);
+    //                 max_area = max(max_area, cur_area);
+    //             }
+    //         }
+    //     }
+    // }
+
+    // for (int i = 0; i < n; i++) {
+    //     int j = (i + 1) % n;
+    //     int k = (j + 1) % n;
+    //     int l = (k + 1) % n;
+    //     double cur_area = area(args[i], args[j], args[k]) + area(args[i], args[k], args[l]);
+    //     max_area = max(max_area, cur_area);
+    // }
+
+    cout << fixed << setprecision(1) << max_area << endl;
+
     return 0;
 }
