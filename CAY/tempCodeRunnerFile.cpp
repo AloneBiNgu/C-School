@@ -1,3 +1,3 @@
-cout << hull[j].id << "\n";
-            check[hull[j].id] = false;
-        }
+for (auto it : Hull) {
+        cout << it.x << " " << it.y << "\n";
+    }

@@ -2,79 +2,136 @@
 
 using namespace std;
 
+struct Points1 {
+    int x, y;
+    long double distance;
+};
+
 struct Points {
     int x, y, id;
 };
 
 int n;
-int id;
 
-bool ccw(Points A, Points B, Points C) {
-    return 1LL * (B.x - A.x) * (C.y - A.y) - 1LL * (C.x - A.x) * (B.y - A.y) > 0;
+long double Dis(Points &a, Points &b) {
+    return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
 }
 
-vector<Points> convexHull(vector<Points> &points) {
-    sort(points.begin(), points.end(), [](Points a, Points b) {
+bool ccw(Points &a, Points &b, Points &c) {
+    return 1LL * (b.x - a.x) * (c.y - a.y) - 1LL * (c.x - a.x) * (b.y - a.y) > 0;
+}
+
+vector<Points> convexHull(vector<Points> &args) {
+    sort(args.begin(), args.end(), [&](Points &a, Points &b) {
         if (a.x != b.x) return a.x < b.x;
         return a.y < b.y;
     });
 
     vector<Points> hull;
-    hull.push_back(points[0]);
-    
-    for (int i = 1; i < points.size(); i++) {
-        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i])) {
+    hull.push_back(args[0]);
+
+    for (int i = 1; i < args.size(); i++) {
+        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), args[i])) {
             hull.pop_back();
         }
-        hull.push_back(points[i]);
+        hull.push_back(args[i]);
     }
 
-    for (int i = points.size() - 2; i >= 0; i--) {
-        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), points[i])) {
+    for (int i = args.size() - 2; i >= 0; i--) {
+        while (hull.size() >= 2 && ccw(hull[hull.size() - 2], hull.back(), args[i])) {
             hull.pop_back();
         }
-        hull.push_back(points[i]);
+        hull.push_back(args[i]); 
     }
 
     if (hull.size() > 1) hull.pop_back();
     return hull;
 }
 
-long double Dis(Points &a, Points &b) {
-    return sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
-}
+// vector<Points1> Find(int u, int v) {
+
+// }
 
 void Process(vector<Points> &hull) {
-    long double distance = 0.0;
-    int u, v;
-    for (int i = 0; i < hull.size(); i++) {
-        int k = (i + 2) % hull.size();
-        auto curDis = Dis(hull[i], hull[k]);
-        if (curDis > distance) {
-            distance = curDis;
-            u = hull[i].id;
-            v = hull[k].id;
+    // vector<Points1> e;
+    
+    // for (int i = 0; i < hull.size(); i++) {
+    //     for (int j = i + 1; j < hull.size(); j++) {
+    //         e.push_back({hull[i].id, hull[j].id, Dis(hull[i], hull[j])});
+    //     }
+    // }
+
+    // sort(e.begin(), e.end(), [&](Points1 &a, Points1 &b) {
+    //     return a.distance < b.distance;
+    // });
+
+    // auto res = e[0];
+    // cout << fixed << setprecision(4) << res.distance << "\n";
+    // cout << res.x << " " << res.y << "\n";
+    Points tmp = hull[0], tmp1 = hull[0];
+    int pos1 = 0, pos2 = 0;
+
+    for (int i = hull.size(); i >= 0; i--) {
+        if (tmp.y > hull[i].y) {
+            tmp = hull[i];
+            pos1 = i;
+        }
+        if (tmp.y == hull[i].y && tmp.x > hull[i].x) {
+            tmp = hull[i];
+            pos1 = i;
         }
     }
-    cout << fixed << setprecision(4) << distance << "\n" << u << " " << v;
+
+    for (int i = 1; i < hull.size(); i++) {
+        if (tmp1.y < hull[i].y) {
+            tmp1 = hull[i];
+            pos2 = i;
+        }
+        if (tmp1.y == hull[i].y && tmp1.x < hull[i].x) {
+            tmp1 = hull[i];
+            pos2 = i;
+        }
+    }
+
+    // for (auto it : e) {
+    //     cout << it.x << " " << it.y << " " << fixed << setprecision(4) << it.distance << "\n";
+    // }
+
+    // cout << tmp.x << " " << tmp.y << " " << tmp.id << "\n";
+    // cout << tmp1.x << " " << tmp1.y << " " << tmp1.id << "\n";
+
+    long double dis = Dis(hull[pos1], hull[pos2]);
+    if (hull[pos1].id > hull[pos2].id) {
+        cout << fixed << setprecision(4) << dis << "\n";
+        cout << hull[pos2].id << " " << hull[pos1].id << "\n";
+    } else if (hull[pos1].id < hull[pos2].id) {
+        cout << fixed << setprecision(4) << dis << "\n";
+        cout << hull[pos1].id << " " << hull[pos2].id << "\n";
+    }
+
+    // cout << pos1 << " " << pos2 << "\n";
+    // // cout << tmp.x << " " << tmp.y << " " << tmp.id << "\n";
 }
 
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
 
-    // freopen("dis.inp", "r", stdin);
-    // freopen("dis.out", "w", stdout);
+    #ifndef ONLINE_JUDGE
+        freopen("dis.inp", "r", stdin);
+        freopen("dis.out", "w", stdout);
+    #endif
 
     cin >> n;
     vector<Points> args(n);
 
-    for (int i = 0; i < n; i++) {
-        cin >> args[i].x >> args[i].y;
-        args[i].id = id;
+    int id = 1;
+    for (Points &a: args) {
+        cin >> a.x >> a.y;
+        a.id = id;
         id++;
     }
-
+    
     auto Hull = convexHull(args);
     Process(Hull);
     return 0;

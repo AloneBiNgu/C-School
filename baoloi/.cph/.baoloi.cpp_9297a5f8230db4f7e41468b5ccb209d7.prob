@@ -1,0 +1,1 @@
+{"name":"Local: baoloi","url":"d:\\Workspace\\School\\HK2\\TinHoc\\baoloi\\baoloi.cpp","tests":[{"id":1683020575049,"input":"8\n7 1\n16 2\n1 5\n13 8\n11 9\n5 10\n2 8\n7 5","output":"7\n38.061\n91.000"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"d:\\Workspace\\School\\HK2\\TinHoc\\baoloi\\baoloi.cpp","group":"local","local":true}

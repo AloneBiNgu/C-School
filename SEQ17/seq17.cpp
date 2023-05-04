@@ -1,87 +1,86 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-const int MAXN = 5e5 + 5;
+#define maxN 500005
+int n, q, a[maxN];
+struct seg{
+    long long val, lazy;
+};
+seg st[maxN * 4];
 
-int n, q;
-int a[MAXN];
-long long tree[MAXN * 4], lazy[MAXN * 4];
-
-void build(int node, int left, int right) {
-    if (left == right) {
-        lazy[node] = 0;
-        tree[node] = a[left];
+void init(int id, int l, int r){
+    if (l == r){
+        st[id].val = a[l];
         return;
     }
-    lazy[node] = 0;
-    int mid = (left + right) / 2;
-    build(node * 2, left, mid);
-    build(node * 2 + 1, mid + 1, right);
 
-    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+    int mid = (l + r)/2;
+    init(id * 2, l, mid);
+    init(id * 2 + 1, mid + 1, r);
+    st[id].val = st[id * 2].val + st[id * 2 + 1].val;
 }
 
-void push_down(int node, int left, int right) {
-    if (lazy[node] != 0 && left < right) {
-        int mid = (left + right) / 2;
-        tree[node * 2] += lazy[node] * (mid - left + 1);
-        tree[node * 2 + 1] += lazy[node] * (right - mid);
-        lazy[node * 2] += lazy[node];
-        lazy[node * 2 + 1] += lazy[node];
-        lazy[node] = 0;
-    }
-}
-
-void update(int node, int left, int right, int l, int r, int val) {
-    if (left > r || right < l) return;
-    if (left >= l && right <= r) {
-        push_down(node, left, right);
-        tree[node] += (right - left + 1) * val;
-        lazy[node] += val;
+void update(int id, int l, int r, int i, int j,int x){
+    if (r < i || j < l) return;
+    if (i <= l && r <= j){
+        st[id].val += (r - l + 1)*x;
+        st[id].lazy = x;
         return;
     }
-    push_down(node, left, right);
-    int mid = (left + right) / 2;
-    update(node * 2, left, mid, l, r, val);
-    update(node * 2 + 1, mid + 1, right, l, r, val);
-    tree[node] = tree[node * 2] + tree[node * 2 + 1];
+
+    int mid = (l + r)/2;
+    if (st[id].lazy != -1){
+        int t = st[id].lazy;
+        st[id].lazy = 0;
+        st[id * 2].val += (mid - l + 1)*t;
+        st[id * 2 + 1].val += (r - mid)*t;
+        st[id * 2].lazy += t;
+        st[id * 2 + 1].lazy += t;
+    }
+    update(id * 2, mid, l, i, j, x);
+    update(id * 2 + 1, mid + 1, r, i, j, x);
+    st[id].val = st[id * 2].val + st[id * 2 + 1].val;
 }
 
-long long query(int node, int left, int right, int l, int r) {
-    if (left > r || right < l) return 0;
-    if (left >= l && right <= r) return tree[node];
-    push_down(node, left, right);
-    int mid = (left + right) / 2;
-    long long sum_left = query(node * 2, left, mid, l, r);
-    long long sum_right = query(node * 2 + 1, mid + 1, right, l, r);
-    return sum_left + sum_right;
+long long query(int id, int l, int r, int i,int j){
+    if (r < i || j < l) return 0;
+    if (i <= l && r <= j){
+        return st[id].val;
+    }
+
+    int mid = (l + r)/2;
+    if (st[id].lazy != -1){
+        int t = st[id].lazy;
+        st[id].lazy = 0;
+        st[id * 2].val += (mid - l + 1)*t;
+        st[id * 2 + 1].val += (r - mid)*t;
+        st[id * 2].lazy += t;
+        st[id * 2 + 1].lazy += t;
+    }
+    long long get1 = query(id * 2, l, mid, i, j);
+    long long get2 = query(id * 2 + 1, mid + 1, r, i, j);
+    return get1 + get2;
 }
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(nullptr);
-
-    freopen("seq17.inp", "r", stdin);
-    freopen("seq17.out", "w", stdout);
-
+int main(){
+    freopen("SEQ17.inp","r",stdin);
+    freopen("SEQ17.out","w",stdout);
     cin >> n >> q;
-    for (int i = 1; i <= n; i++) {
+    for (int i = 1; i <= n ; i++)
         cin >> a[i];
-    }
 
-    build(1, 1, n);
-
-    while (q--) {
-        int type, l, r;
-        cin >> type >> l >> r;
-        if (type == 0) {
-            int t;
-            cin >> t;
-            update(1, 1, n, l, r, t);
+    init(1, 1, n);
+    for (int i = 1; i <= q; i++){
+        int type; cin >> type;
+        if (type == 0){
+            int x, y, z; cin >> x >> y >> z;
+            update(1, 1, n, x, y, z);
         } else {
-            cout << query(1, 1, n, l, r) << '\n';
+            int x, y; cin >> x >> y;
+            cout << query(1, 1, n, x, y) << "\n";
         }
     }
+
 
     return 0;
 }

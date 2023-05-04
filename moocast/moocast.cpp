@@ -68,6 +68,7 @@ int main() {
     int last;
     for (auto it : args) {
         if (CanJoint(it.x, it.y)) {
+            // cout << it.x << " " << it.y << " " << it.distance << "\n";
             last = it.distance;
         }
     }

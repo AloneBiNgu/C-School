@@ -74,6 +74,8 @@ int main() {
     }
     auto Hull = convexHull(args);
 
+    // for (auto it : Hull) cout << it.x << " " << it.y << "\n";
+
     cout << Hull.size() << "\n";
     Calc(args, dt, chuvi);
 
