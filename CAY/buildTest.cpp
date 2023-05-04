@@ -6,8 +6,6 @@ struct Points {
     int x, y, id;
 };
 
-int n;
-
 bool ccw(Points A, Points B, Points C) {
     return 1LL * (B.x - A.x) * (C.y - A.y) - 1LL * (C.x - A.x) * (B.y - A.y) > 0;
 }
@@ -113,29 +111,51 @@ void Process(vector<Points> &hull) {
     }
 }
 
-int main() {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-
-    #ifndef ONLINE_JUDGE
-        freopen("cay.inp", "r", stdin);
-        freopen("cay.out", "w", stdout);
-    #endif
-
-    cin >> n;
-    vector<Points> args(n);
-
+void Run(int n, vector<pair<int, int>> &args) {
     int id = 1;
-    for (Points &a : args) {
-        cin >> a.x >> a.y;
-        a.id = id;
+    vector<Points> newArgs(n);
+
+    for (auto it : args) {
+        newArgs.push_back({it.first, it.second, id});
         id++;
     }
 
-    auto Hull = convexHull(args);
-    // for (auto it : Hull) {
-    //     cout << it.x << " " << it.y << "\n";
-    // }
+    auto Hull = convexHull(newArgs);
     Process(Hull);
+    return;
+}
+
+int r() {
+    return rand() % 10 + 4;
+}
+
+int r2() {
+    return rand() % 19999 - 9999;
+}
+
+int sinhTest(int test) {
+    while (test--) {
+        cout << "New test:\n";
+        vector<pair<int, int>> args;
+        int n = r();
+        for (int i = 0; i < n; i++) {
+            args.push_back({r2(), r2()});
+        }
+
+        cout << n << "\n";
+
+        for (auto it : args) {
+            cout << it.first << " " << it.second << "\n";
+        }
+
+        cout << "Ket qua:\n"; Run(n, args); cout << "\n";
+        cout << "\n";
+    }
+}
+
+int main() {
+    srand(time(0));
+    freopen("test.txt", "w", stdout);
+    sinhTest(3);
     return 0;
 }

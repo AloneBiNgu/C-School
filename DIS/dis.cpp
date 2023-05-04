@@ -2,16 +2,15 @@
 
 using namespace std;
 
-struct Points1 {
-    int x, y;
-    long double distance;
-};
+const int maxN = 1505;
 
 struct Points {
-    int x, y, id;
+    long long x, y, id;
 };
 
 int n;
+bool checkId[maxN];
+map<pair<long long, long long>, bool> m;
 
 long double Dis(Points &a, Points &b) {
     return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
@@ -48,26 +47,19 @@ vector<Points> convexHull(vector<Points> &args) {
     return hull;
 }
 
-// vector<Points1> Find(int u, int v) {
+vector<Points> validateArgs(vector<Points> &args, bool checkId[]) {
+    vector<Points> newArgs;
 
-// }
+    for (auto it : args) {
+        if (checkId[it.id] == true) {
+            newArgs.push_back(it);
+        }
+    }
+    
+    return newArgs;
+}
 
 void Process(vector<Points> &hull) {
-    // vector<Points1> e;
-    
-    // for (int i = 0; i < hull.size(); i++) {
-    //     for (int j = i + 1; j < hull.size(); j++) {
-    //         e.push_back({hull[i].id, hull[j].id, Dis(hull[i], hull[j])});
-    //     }
-    // }
-
-    // sort(e.begin(), e.end(), [&](Points1 &a, Points1 &b) {
-    //     return a.distance < b.distance;
-    // });
-
-    // auto res = e[0];
-    // cout << fixed << setprecision(4) << res.distance << "\n";
-    // cout << res.x << " " << res.y << "\n";
     Points tmp = hull[0], tmp1 = hull[0];
     int pos1 = 0, pos2 = 0;
 
@@ -93,13 +85,6 @@ void Process(vector<Points> &hull) {
         }
     }
 
-    // for (auto it : e) {
-    //     cout << it.x << " " << it.y << " " << fixed << setprecision(4) << it.distance << "\n";
-    // }
-
-    // cout << tmp.x << " " << tmp.y << " " << tmp.id << "\n";
-    // cout << tmp1.x << " " << tmp1.y << " " << tmp1.id << "\n";
-
     long double dis = Dis(hull[pos1], hull[pos2]);
     if (hull[pos1].id > hull[pos2].id) {
         cout << fixed << setprecision(4) << dis << "\n";
@@ -108,14 +93,12 @@ void Process(vector<Points> &hull) {
         cout << fixed << setprecision(4) << dis << "\n";
         cout << hull[pos1].id << " " << hull[pos2].id << "\n";
     }
-
-    // cout << pos1 << " " << pos2 << "\n";
-    // // cout << tmp.x << " " << tmp.y << " " << tmp.id << "\n";
 }
 
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(0);
+    cout.tie(0);
 
     #ifndef ONLINE_JUDGE
         freopen("dis.inp", "r", stdin);
@@ -126,11 +109,26 @@ int main() {
     vector<Points> args(n);
 
     int id = 1;
-    for (Points &a: args) {
-        cin >> a.x >> a.y;
-        a.id = id;
+    // for (Points &a: args) {
+    //     cin >> a.x >> a.y;
+    //     a.id = id;
+    //     id++;
+    // }
+
+    long long x, y;
+    for (int i = 0; i < n; i++) {
+        cin >> x >> y;
+        if (m[{x, y}] < 1) {
+            checkId[id] = true;
+            args.push_back({x, y, id});
+            m[{x, y}] = true;
+        } else {
+            checkId[id] = false;
+        }
         id++;
     }
+
+    args = validateArgs(args, checkId);
     
     auto Hull = convexHull(args);
     Process(Hull);
