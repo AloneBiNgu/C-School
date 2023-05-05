@@ -130,7 +130,7 @@ int r() {
 }
 
 int r2() {
-    return rand() % 19999 - 9999;
+    return rand() % 100 - 100;
 }
 
 int sinhTest(int test) {
