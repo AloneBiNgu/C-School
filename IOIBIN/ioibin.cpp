@@ -25,7 +25,7 @@ bool join(int u, int v) {
         parent[v] = u;
     }
     return true;
-}
+}//
 
 int main() {
     ios::sync_with_stdio(0);
